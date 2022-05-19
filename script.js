@@ -83,7 +83,7 @@ async function fetchData(url) {
           : "Postal_code : " + data[0].postal_code + "\n") +
         (data[0].country == null ? "" : "Country : " + data[0].country);
     } else if (children.id == "phoneValue") {
-      console.log(data[0].phone == null);
+     
       data[0].phone == null
         ? (children.innerText = "Not Available")
         : (children.innerText = data[0].phone);
