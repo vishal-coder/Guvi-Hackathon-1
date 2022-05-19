@@ -1,46 +1,8 @@
-/*All your HTML elements should be created with DOM.
- *DONE* Use the async/await.
- *DONE* Use try-catch to handle errors.
- *DONE* Use fetch() to get the data from Open Brewery API/
+//create HTML DOM Structure
+createHTMLStructure();
 
-
-https://www.openbrewerydb.org/documentation/01-listbreweries
-https://www.openbrewerydb.org/
-
-Random  = https://api.openbrewerydb.org/breweries/random
-single  = https://api.openbrewerydb.org/breweries/madtree-brewing-cincinnati
-search = https://api.openbrewerydb.org/breweries/search?query={search}
-
-
-Things to show on page:-
-1. Implement a search filter based on the text entered in the input field.
-    # *DONE* search button = use  url encoding for spaces.
-    # *DONE* reset button
-    # *DONE* random button
-    
-
-// add  attr href="value" in DOM of data
-
-2. *DONE* Display the breweries name and type. = name , brewery_type
-3. *DONE* Display the brewery’s address. = street, address_2,address_3,city,state,   county_province,postal_code, country
-4. *DONE* Also display the website url. = website_url
-5.  *DONE*Display the phone no of the brewery. = phone
-
-*/
-
-//------------------------/navbar <i class="fa fa-beer" aria-hidden="true"></i>
-//------------------------/ info abt site
-
-//------------------------/search
-//------------------------/body
-//------------------------/
-//------------------------/footer
-
-//------------------------/footer
-console.log("");
 //get input from textbox
 let myForm = document.getElementById("myform");
-
 myForm.addEventListener("submit", (e) => {
   e.preventDefault();
   performAction(myForm.innerText);
@@ -53,15 +15,13 @@ buttons.forEach((button) => {
     performAction(button.innerText);
   });
 });
-console.log(buttons);
 
 function performAction(text) {
   let url = "https://api.openbrewerydb.org/breweries/";
   let search = document.getElementById("searchBox");
-  // let datarow = document.getElementById("cardDiv");
+
   if (text == "Clear") {
     search.value = "";
-    // datarow.style.display = "none";
     clearData();
     return;
   } else if (text == "Random Brewery") {
@@ -69,44 +29,36 @@ function performAction(text) {
   } else {
     url += `search?query=${search.value}`;
   }
-  //   datarow.style.display = "block";
   fetchData(url);
   url = "";
 }
 
 async function fetchData(url) {
   try {
-    let response = await fetch(url); //rml
-    console.log("response", response);
+    let response;
+    response = await fetch(url, { cache: "no-cache" });
     let result = await response.json();
-    console.log("result", result);
 
     if (result.length == "0") {
-      alert("Data not found");
-      //   let datarow = document.getElementById("cardDiv");
-      //   datarow.style.display = "none";
-      return;
+      clearData();
+      throw "No data found for given input";
     }
     displayData(result);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    alert(err);
   }
 
   function displayData(data) {
-    console.log("displayData", data[0]);
     var allChilds = document.getElementById("infoDiv").children;
 
     Array.from(allChilds).forEach((child) => {
       let children = child.children;
 
       for (let i = 0; i < children.length; i++) {
-        // let nestedchildren = child.children;
         fillData(children[i], data);
       }
     });
   }
-  // call url based on search or random
-  //display data on promise resolve
 
   function fillData(children, data) {
     if (children.id == "nameValue") {
@@ -131,23 +83,172 @@ async function fetchData(url) {
           : "Postal_code : " + data[0].postal_code + "\n") +
         (data[0].country == null ? "" : "Country : " + data[0].country);
     } else if (children.id == "phoneValue") {
-      children.innerText = data[0].phone;
+      console.log(data[0].phone == null);
+      data[0].phone == null
+        ? (children.innerText = "Not Available")
+        : (children.innerText = data[0].phone);
     } else if (children.id == "urlValue") {
       if (data[0].website_url == null) {
-        children.innerText = "";
+        children.innerText = "Not Available";
         return;
       }
-      children.innerText = data[0].website_url;
-      children.setAttribute("href", data[0].website_url);
+
+      children.innerHTML = `<a href="${data[0].website_url}" target="_blank">${data[0].website_url}</a> `;
     } else {
     }
   }
 }
 
 function clearData() {
-  let nameValue = (document.getElementById("nameValue").innerText = "");
-  let typeValue = (document.getElementById("typeValue").innerText = "");
-  let addressValue = (document.getElementById("addressValue").innerText = "");
-  let phoneValue = (document.getElementById("phoneValue").innerText = "");
-  let urlValue = (document.getElementById("urlValue").innerText = "");
+  document.getElementById("nameValue").innerText = "";
+  document.getElementById("typeValue").innerText = "";
+  document.getElementById("addressValue").innerText = "";
+  document.getElementById("phoneValue").innerText = "";
+  document.getElementById("urlValue").innerText = "";
+}
+
+function createHTMLStructure() {
+  let nav = createHTMLEle("nav", "class", "navbar navbar-custom");
+  let spanNav = createHTMLEle(
+    "span",
+    "class",
+    "navbar-brand mb-0 h1 text-center"
+  );
+  let navi = createHTMLEle("i", "class", "fa fa-beer fa-2x");
+  let spanNested = createHTMLEle(
+    "span",
+    "class",
+    "brand-name",
+    null,
+    null,
+    "Brewery Directory"
+  );
+
+  spanNav.append(navi, spanNested);
+  nav.append(spanNav);
+
+  let container = createHTMLEle("div", "class", "container");
+  let rowH = createHTMLEle("div", "class", "row");
+  let r1_div = createHTMLEle("div", "class", "col-lg-12 text-center");
+  let h1 = document.createElement("h1");
+  h1.innerText = "Welcome to Brewery directory";
+
+  r1_div.append(h1);
+  rowH.append(r1_div);
+  container.append(rowH);
+
+  let rowbtn = createHTMLEle("div", "class", "row");
+  let r2_div1 = createHTMLEle("div", "class", "col-lg-2");
+  let r2_div2 = createHTMLEle("div", "class", "col-lg-8 text-center");
+
+  let formDiv = createHTMLEle("div", "class", "form_group");
+  let form = document.createElement("form");
+  form.setAttribute("id", "myform");
+
+  let searchbx = createHTMLEle("input", "type", "text", "id", "searchBox");
+  searchbx.setAttribute("name", "searchBox-el");
+  searchbx.setAttribute("required", true);
+
+  let searchBtn = createHTMLEle(
+    "input",
+    "type",
+    "submit",
+    "class",
+    "btn btn-primary"
+  );
+  searchBtn.setAttribute("value", "Search");
+  searchBtn.setAttribute("id", "seachBtn");
+
+  let clearBtn = createHTMLEle(
+    "button",
+    "type",
+    "button",
+    "class",
+    "btn btn-primary"
+  );
+  clearBtn.innerText = "Clear";
+
+  let randomBtn = createHTMLEle(
+    "button",
+    "type",
+    "button",
+    "class",
+    "btn btn-primary"
+  );
+  randomBtn.innerText = "Random Brewery";
+
+  form.append(searchbx, searchBtn, clearBtn, randomBtn);
+  formDiv.append(form);
+
+  r2_div2.append(formDiv);
+
+  let r2_div3 = createHTMLEle("div", "class", "col-lg-2");
+
+  rowbtn.append(r2_div1, r2_div2, r2_div3);
+
+  let datarow = createHTMLEle("div", "class", "row", "id", "datarow");
+  let r3_div1 = createHTMLEle("div", "class", "col-lg-3");
+  let r3_div2 = createHTMLEle("div", "class", "col-lg-6 text-center");
+
+  let cardDiv = createHTMLEle("div", "class", "card", "id", "cardDiv");
+  let infoDiv = createHTMLEle("div", "class", "infodiv", "id", "infoDiv");
+
+  let dataDiv1 = createHTMLEle("div", "class", "data");
+  let nameDiv1 = createHTMLEle("div", "id", "name");
+  nameDiv1.innerText = "Name";
+  let nameDiv2 = createHTMLEle("div", "id", "nameValue", "class", "value");
+  dataDiv1.append(nameDiv1, nameDiv2);
+
+  let dataDiv2 = createHTMLEle("div", "class", "data");
+  let typeDiv1 = createHTMLEle("div", "id", "type");
+  typeDiv1.innerText = "Type";
+  let typeDiv2 = createHTMLEle("div", "id", "typeValue", "class", "value");
+  dataDiv2.append(typeDiv1, typeDiv2);
+
+  let dataDiv3 = createHTMLEle("div", "class", "data");
+  let addressDiv1 = createHTMLEle("div", "id", "address");
+  addressDiv1.innerText = "Address";
+  let addressDiv2 = createHTMLEle(
+    "div",
+    "id",
+    "addressValue",
+    "class",
+    "value"
+  );
+  dataDiv3.append(addressDiv1, addressDiv2);
+
+  let dataDiv4 = createHTMLEle("div", "class", "data");
+  let phoneDiv1 = createHTMLEle("div", "id", "phone");
+  phoneDiv1.innerText = "Phone";
+  let phoneDiv2 = createHTMLEle("div", "id", "phoneValue", "class", "value");
+  dataDiv4.append(phoneDiv1, phoneDiv2);
+
+  let dataDiv5 = createHTMLEle("div", "class", "data");
+  let urlDiv1 = createHTMLEle("div", "id", "url");
+  urlDiv1.innerText = "Website";
+  let urlDiv2 = createHTMLEle("div", "id", "urlValue", "class", "value");
+  let a = document.createElement("a");
+  a.setAttribute("href", "");
+  a.setAttribute("target", "_blank");
+  urlDiv2.append(a);
+
+  dataDiv5.append(urlDiv1, urlDiv2);
+
+  infoDiv.append(dataDiv1, dataDiv2, dataDiv3, dataDiv4, dataDiv5);
+  cardDiv.append(infoDiv);
+  r3_div2.append(cardDiv);
+
+  let r3_div3 = createHTMLEle("div", "class", "col-lg-3");
+  datarow.append(r3_div1, r3_div2, r3_div3);
+
+  container.append(rowH, rowbtn, datarow);
+  document.body.append(nav, container);
+}
+function createHTMLEle(tagName, attr, value1, attr1, value2, textValue) {
+  let ele = document.createElement(tagName);
+  ele.setAttribute(attr, value1);
+  if (attr1 != null) ele.setAttribute(attr1, value2);
+  if (textValue != null) ele.innerText = textValue;
+
+  return ele;
 }
