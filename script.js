@@ -148,6 +148,7 @@ function createHTMLStructure() {
   let searchbx = createHTMLEle("input", "type", "text", "id", "searchBox");
   searchbx.setAttribute("name", "searchBox-el");
   searchbx.setAttribute("required", true);
+  searchbx.setAttribute("placeholder", "Enter name of Brewery");
 
   let searchBtn = createHTMLEle(
     "input",
